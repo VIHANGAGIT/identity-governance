@@ -159,6 +159,8 @@ public class UserProvisioningExecutor implements Executor {
 
             ExecutorConsentUtils.processUserConsent(COMPONENT_ID, context, user, userStoreDomainName);
 
+            createFederatedAssociations(user, context.getTenantDomain(), context.getContextIdentifier());
+
             response.setResult(STATUS_COMPLETE);
             return response;
         } catch (UserStoreException e) {
@@ -466,7 +468,7 @@ public class UserProvisioningExecutor implements Executor {
                     if (StringUtils.isNotBlank(idpName) && StringUtils.isNotBlank(idpSubjectId)) {
                         try {
                             User localUser = new User();
-                            localUser.setUserName(user.getUsername());
+                            localUser.setUserName(UserCoreUtil.removeDomainFromName(user.getUsername()));
                             localUser.setTenantDomain(tenantDomain);
                             localUser.setUserStoreDomain(user.getUserStoreDomain());
                             fedAssociationManager.createFederatedAssociation(localUser, idpName, idpSubjectId);
